@@ -1,4 +1,4 @@
-#!csvt/bin/python3
+#!.dt-venv/bin/python3
 from classes.arg_reader import ArgumentReader
 from classes.reader import ReaderFactory
 from classes.transform import Transformer

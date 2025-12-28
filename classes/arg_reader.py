@@ -2,7 +2,7 @@ import argparse, os, re
 
 class ArgumentReader:
     def __init__(self):
-        parser = argparse.ArgumentParser(prog="CSVFold", description="transform documents to a standard statement form")
+        parser = argparse.ArgumentParser(prog="dt", description="An efficient structured data converter")
 
         # Positional arguments.
         parser.add_argument("paths", nargs="+", type=str, help="the path to the bank statement file")

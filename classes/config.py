@@ -1,20 +1,28 @@
-import json
+import json, os, re
 from classes.transform import Transform, TransformFactory
+from classes.db import DatabaseInterface
 
 class Config:
-    def __init__(self, config_path: str):
-        try:
-            with open(config_path, "r", encoding="utf-8") as file:
-                self.config = json.load(file)
+    def __init__(self, config_name: str, db: DatabaseInterface):
+        if os.path.isfile(config_name) and re.match(r".*\.(json|JSON)$", config_name):
+            try:
+                with open(config_name, "r", encoding="utf-8") as file:
+                    self.config = json.load(file)
+            except Exception as e:
+                raise ValueError(f"Failed to load configuration file: {e}.")
+        else:
+            read_config = db.read_config(config_name)
 
-                self.name = self.config.get("name", "Unnamed Configuration")
-                self.description = self.config.get("description", "")
-                self.properties = self.config.get("properties", {})
-                self.unparsed_transforms = self.config.get("transforms", [])
+            if(read_config is None):
+                raise ValueError(f"Failed to load config {config_name}. Ensure config profile exists.")
 
-        except Exception as e:
-            raise ValueError(f"Failed to load configuration file: {e}")
+            self.config = json.loads(read_config[0])
         
+        self.name = self.config.get("name", "Unnamed Configuration")
+        self.description = self.config.get("description", "")
+        self.properties = self.config.get("properties", {})
+        self.unparsed_transforms = self.config.get("transforms", [])
+
     def name(self) -> str:
         if isinstance(self.name, str):
             return self.name

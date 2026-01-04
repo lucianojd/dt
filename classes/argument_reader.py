@@ -1,4 +1,4 @@
-import argparse, os, re
+import argparse
 
 class ArgumentReader:
     def __init__(self):
@@ -24,6 +24,9 @@ class ArgumentReader:
 
         config_modes_delete = config_modes.add_parser("delete")
         config_modes_delete.add_argument('name', type=str, help="Name of the configuration to be deleted")
+
+        config_modes_info = config_modes.add_parser("info")
+        config_modes_info.add_argument('name', type=str, help="Print details about the configuration")
 
         self.args = parser.parse_args()
 

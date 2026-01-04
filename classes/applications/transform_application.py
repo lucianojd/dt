@@ -1,44 +1,14 @@
-import argparse, os, re, pathlib
+import os, argparse, re
+
+from .application import Application
+from classes.db.interface import DatabaseConnection
 from classes.config import Config
-from classes.arg_reader import ArgumentReader
-from classes.reader import ReaderFactory
-from classes.writer import Writer
+from classes.reader import Reader, ReaderFactory
 from classes.transform import Transformer
-from classes.db import DatabaseInterface
-
-class Application:
-    def __init__(self, application: str):
-        self.application = application
-
-    def run(self) -> None:
-        raise RuntimeError(f"run method was not implemanted for \"{self.application}\" application")
-
-class ConfigApplication(Application):
-    def __init__(self, args: argparse.Namespace, db: DatabaseInterface):
-        super().__init__("config")
-        self.db = db
-        self.mode = args.mode
-        self.args = args
-
-    def run(self) -> None:
-        match(self.mode):
-            case "add":
-                name = os.path.basename(pathlib.Path(self.args.file).stem)
-                
-                with open(self.args.file, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                    self.db.config_insert(name, content)
-            case "list":
-                configs = self.db.config_list()
-                print(f"Saved profiles ({len(configs)})\n-----")
-                for index, config in enumerate(configs):
-                    print(f"{index+1}| {config[0]}")
-            case "delete":
-                self.db.config_delete(self.args.name)
-
+from classes.writer import Writer
 
 class TransformApplication(Application):
-    def __init__(self, args: argparse.Namespace, db: DatabaseInterface):
+    def __init__(self, args: argparse.Namespace, db: DatabaseConnection):
         super().__init__("transform")
         self.db = db
 
@@ -111,14 +81,3 @@ class TransformApplication(Application):
 
     def __str__(self) -> str:
         return f"paths=({self.paths})"
-
-class ApplicationFactory:
-    @staticmethod
-    def create_application(argument_reader: ArgumentReader, db: DatabaseInterface) -> Application:
-        match(argument_reader.get_application()):
-            case "transform":
-                return TransformApplication(argument_reader.args, db)
-            case "config":
-                return ConfigApplication(argument_reader.args, db)
-        
-        raise Exception()

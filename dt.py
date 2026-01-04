@@ -1,12 +1,12 @@
 #!.dt-venv/bin/python3
-from classes.arg_reader import ArgumentReader
-from classes.application import ApplicationFactory
-from classes.db import DatabaseInterface
+from classes.argument_reader import ArgumentReader
+from classes.applications.application_factory import ApplicationFactory
+from classes.db.interface import DatabaseConnection
 
 def main():
     try:
 
-        db = DatabaseInterface()
+        db = DatabaseConnection()
         db.init_db()
 
         arg_reader = ArgumentReader()
@@ -14,12 +14,8 @@ def main():
         application = ApplicationFactory.create_application(arg_reader, db)
 
         application.run()
-
     except Exception as e:
         print(f"Error running dt: {e}")
-        return
-    
-    return
 
 if __name__ == "__main__":
     main()

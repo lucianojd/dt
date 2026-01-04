@@ -5,6 +5,7 @@ from enum import Enum
 class Filter(ABC):
     @abstractmethod
     def apply(self, df: pd.DataFrame) -> pd.Series:
+        """Apply the given transformation"""
         pass
     
     @abstractmethod
@@ -15,6 +16,7 @@ class Filter(ABC):
         return self.__str__()
 
 class NotNull(Filter):
+    """Filter for checking that a column is not null"""
     def __init__(self, column: str | int):
         super().__init__()
         self.column = column
@@ -26,6 +28,7 @@ class NotNull(Filter):
         return f"NotNull(column={self.column})"
 
 class GreaterThan(Filter):
+    """Filter for checking if a value is greater than another value"""
     def __init__(self, column: str | int, threshold: int | float):
         super().__init__()
         self.column = column

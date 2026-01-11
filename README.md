@@ -42,3 +42,16 @@ Assignments describe operations for assigning a new value to a specified field. 
 |-----|-----|-----|
 |String|`type` -> `string` <br/> `column` -> *name or index of the column to assign the value to* (`string`,`int`) <br/> `value` -> *value to assign to the field* (`string`)|Assigns **value** to the field specified by **column**|
 |Column|`type` -> `column` <br/> `column` -> *name or index of the column to assign the value to* (`string`, `int`) <br/> `value` -> *name or index of the column to read the value from* (`string`, `int`)|Assign the value from one field to another field on a given row.|
+
+# To-do List
+
+- [x] Create transform functionality for shaping data into a new form.
+- [x] Add support for parsing transform configurations in a `json` file.
+- [x] Add support for reading `csv` files.
+- [] Add a GUI for managing importing and transforming files.
+- [] Add a GUI for browsing existing transactions.
+- [] Add support for exporting a filtered set of transactions.
+- [x] Add support for storing transactions in a `sqlite` database.
+- [x] Add support for multiple command line applications.
+- [x] Add **config** application.
+- [x] Add **transform** application.

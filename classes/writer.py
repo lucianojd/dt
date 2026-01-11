@@ -1,8 +1,11 @@
 import pandas as pd
+from classes.db.writer_interface import WriterDatabaseInterface
+from classes.db.interface import DatabaseConnection
 
 class Writer:
     """Class for writing the data to a file. Currently supports CSV format only."""
-    def __init__(self, file_path: str, verbose=False, append=False):
+    def __init__(self, db: DatabaseConnection, file_path: str | None, verbose=False, append=False):
+        self.db = db
         self.file_path = file_path
         self.verbose = verbose
         self.append = append
@@ -26,11 +29,15 @@ class Writer:
     
     def write(self):
         """Write the data frame to the output file in CSV format."""
-        self.data.to_csv(
-            self.file_path, 
-            index=False, 
-            float_format="%.2f", 
-            date_format="%Y-%m-%d", 
-            header=self.append is False, 
-            mode="a" if self.append is True else "w"
-        )
+        if isinstance(self.file_path, str):
+            self.data.to_csv(
+                self.file_path, 
+                index=False, 
+                float_format="%.2f", 
+                date_format="%Y-%m-%d", 
+                header=self.append is False, 
+                mode="a" if self.append is True else "w"
+            )
+        else:
+            writer_interface = WriterDatabaseInterface(self.db)
+            writer_interface.transactions_insert(self.data)

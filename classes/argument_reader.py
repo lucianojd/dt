@@ -11,7 +11,7 @@ class ArgumentReader:
         transform_parser.add_argument("paths", nargs="+", type=str, help="the path to the bank statement file")
         transform_parser.add_argument("-a", "--append", action="store_true", help="append to the output file instead of overwriting")
         transform_parser.add_argument("-v", "--verbose", action="store_true", help="enable verbose output")
-        transform_parser.add_argument("-o", "--output", type=str, default="output.csv", help="the path to the output file (default: output.csv)")
+        transform_parser.add_argument("-o", "--output", type=str, help="the path to the output file (default: output.csv)")
 
         # Setup config application.
         config_parser = subparsers.add_parser("config")
@@ -28,6 +28,7 @@ class ArgumentReader:
         config_modes_info = config_modes.add_parser("info")
         config_modes_info.add_argument('name', type=str, help="Print details about the configuration")
 
+        # Parse the arguments.
         self.args = parser.parse_args()
 
     def get_application(self):

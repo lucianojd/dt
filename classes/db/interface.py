@@ -22,10 +22,10 @@ class DatabaseConnection:
             description TEXT,
             institution TEXT,
             type TEXT,
-            cents INTEGER,
-            amount REAL GENERATED ALWAYS AS (cents / 100) VIRTUAL)
+            amount REAL)
             """
         )
+        
         self.con.commit()
 
 class DatabaseInterface:

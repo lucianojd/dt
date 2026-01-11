@@ -29,7 +29,7 @@ class TransformApplication(Application):
             transformer = Transformer(self.verbose)
             transformer.set_transforms(self.config.transforms())
 
-            writer = Writer(self.output,verbose=self.verbose,append=self.append)
+            writer = Writer(self.db, self.output, self.verbose, self.append)
         
             for reader in readers:
                 try: 

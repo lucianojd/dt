@@ -2,8 +2,8 @@ import pandas as pd
 from enum import Enum
 from abc import ABC, abstractmethod
 from datetime import datetime as dt
-from classes.filter import Filter, FilterFactory
-from classes.assignment import Assignment, AssignmentFactory
+from .filter import Filter, FilterFactory
+from .assignment import Assignment, AssignmentFactory
 from functools import reduce
 import operator
 

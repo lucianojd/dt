@@ -1,8 +1,10 @@
 import sqlite3
+import pathlib
 
 class DatabaseConnection:
-    def __init__(self):
-        self.con = sqlite3.connect("db.sqlite")
+    def __init__(self, executable_path: str):
+        parent_folder = pathlib.Path(executable_path).parent
+        self.con = sqlite3.connect(f"{parent_folder}/db.sqlite")
 
     def init_db(self):
         self.con.execute(

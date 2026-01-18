@@ -1,8 +1,8 @@
 import argparse, os, pathlib
 from .application import Application
-from classes.db.interface import DatabaseConnection
-from classes.db.config_interface import ConfigDatabaseInterface
-from classes.config import Config
+from dt.db.interface import DatabaseConnection
+from dt.db.config_interface import ConfigDatabaseInterface
+from dt.helpers.config import Config
 
 class ConfigApplication(Application):
     def __init__(self, args: argparse.Namespace, db: DatabaseConnection):

@@ -1,12 +1,12 @@
 #!.dt-venv/bin/python3
-from classes.argument_reader import ArgumentReader
-from classes.applications.application_factory import ApplicationFactory
-from classes.db.interface import DatabaseConnection
+import sys
+from dt.helpers.argument_reader import ArgumentReader
+from dt.applications.application_factory import ApplicationFactory
+from dt.db.interface import DatabaseConnection
 
 def main():
     try:
-
-        db = DatabaseConnection()
+        db = DatabaseConnection(sys.argv[0])
         db.init_db()
 
         arg_reader = ArgumentReader()

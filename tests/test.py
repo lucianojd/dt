@@ -1,7 +1,7 @@
 #!.venv/bin/python3
 import unittest
 import pandas as pd
-from classes import transform 
+import dt.classes.transform as transform
 
 class TestTransforms(unittest.TestCase):
     def test_TrimStrings(self):

@@ -1,7 +1,7 @@
 import json, os, re
-from classes.transform import Transform, TransformFactory
-from classes.db.interface import DatabaseConnection
-from classes.db.config_interface import ConfigDatabaseInterface
+from dt.helpers.transform import Transform, TransformFactory
+from dt.db.interface import DatabaseConnection
+from dt.db.config_interface import ConfigDatabaseInterface
 
 class Config:
     def __init__(self, config_name: str, db: DatabaseConnection):

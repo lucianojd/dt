@@ -1,5 +1,5 @@
-from classes.argument_reader import ArgumentReader
-from classes.db.interface import DatabaseConnection
+from dt.helpers.argument_reader import ArgumentReader
+from dt.db.interface import DatabaseConnection
 from .application import Application
 from .config_application import ConfigApplication
 from .transform_application import TransformApplication

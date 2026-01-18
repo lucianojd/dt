@@ -1,6 +1,6 @@
 import pandas as pd
-from classes.db.writer_interface import WriterDatabaseInterface
-from classes.db.interface import DatabaseConnection
+from dt.db.writer_interface import WriterDatabaseInterface
+from dt.db.interface import DatabaseConnection
 
 class Writer:
     """Class for writing the data to a file. Currently supports CSV format only."""

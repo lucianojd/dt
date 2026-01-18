@@ -1,11 +1,11 @@
 import os, argparse, re
 
 from .application import Application
-from classes.db.interface import DatabaseConnection
-from classes.config import Config
-from classes.reader import Reader, ReaderFactory
-from classes.transform import Transformer
-from classes.writer import Writer
+from dt.db.interface import DatabaseConnection
+from dt.helpers.config import Config
+from dt.io.reader import Reader, ReaderFactory
+from dt.helpers.transform import Transformer
+from dt.io.writer import Writer
 
 class TransformApplication(Application):
     def __init__(self, args: argparse.Namespace, db: DatabaseConnection):

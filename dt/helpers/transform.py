@@ -44,6 +44,7 @@ class Transformer:
         """Set the list of transforms."""
         self.transforms = transforms
 
+    # Change this to return a list of transaction objects.
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         """Apply all transforms to the given data frame and return the transformed data frame."""
         for t in self.transforms:

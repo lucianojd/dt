@@ -10,6 +10,7 @@ class ReaderFactory:
     def create_reader(file_path: str, headers = True, verbose=False):
         return Reader(file_path, headers, verbose)
 
+# Make a CSV and config specific reader.
 class Reader:
     def __init__(self, file_path: str, headers = True, verbose = False):
         self.file_path = file_path

@@ -7,6 +7,7 @@ class Config:
     def __init__(self, config_name: str, db: DatabaseConnection):
         self.config_interface = ConfigDatabaseInterface(db)
 
+        # Move this logic into a Config reader class.
         if os.path.isfile(config_name) and re.match(r".*\.(json|JSON)$", config_name):
             try:
                 with open(config_name, "r", encoding="utf-8") as file:

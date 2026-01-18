@@ -1,5 +1,6 @@
 import argparse
 
+# Change to parser and de-couple adding arguments to application specific subparsers.
 class ArgumentReader:
     def __init__(self):
         parser = argparse.ArgumentParser(prog="dt", description="An efficient structured data converter")

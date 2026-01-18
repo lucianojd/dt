@@ -31,6 +31,7 @@ class TransformApplication(Application):
 
             writer = Writer(self.db, self.output, self.verbose, self.append)
         
+            # Want to adjust this logic so the reader creates one large data frame instead of multiple dataframes.
             for reader in readers:
                 try: 
                     df = reader.read()

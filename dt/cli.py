@@ -6,11 +6,16 @@ from dt.db.interface import DatabaseConnection
 
 def main():
     try:
+        # Create database instance.
         db = DatabaseConnection(sys.argv[0])
         db.init_db()
 
+        # Create parser.
         arg_reader = ArgumentReader()
 
+        # Attach applications.
+
+        # Determine application to run.
         application = ApplicationFactory.create_application(arg_reader, db)
 
         application.run()

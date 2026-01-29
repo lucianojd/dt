@@ -2,6 +2,8 @@
 # To-do List
 
 ## Core
+- Handle a list of files being passed both to `transform` and `config add`
+- Add `TranscationList` and `Transaction` objects
 - Finish the different potential filters.
 - Ignore when there are duplicate transactions and move on to the next transaction.
 - Add support for categorizing transactions.

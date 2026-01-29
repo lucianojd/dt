@@ -1,31 +1,16 @@
-import json, os, re
-from dt.helpers.transform import Transform, TransformFactory
-from dt.db.interface import DatabaseConnection
-from dt.db.config_interface import ConfigDatabaseInterface
+from dt.lib.transform import Transform, TransformFactory
+from dt.io.db.interface import DatabaseInterface
+from dt.io.reader import ConfigReader
 
 class Config:
-    def __init__(self, config_name: str, db: DatabaseConnection):
-        self.config_interface = ConfigDatabaseInterface(db)
-
-        # Move this logic into a Config reader class.
-        if os.path.isfile(config_name) and re.match(r".*\.(json|JSON)$", config_name):
-            try:
-                with open(config_name, "r", encoding="utf-8") as file:
-                    self.config = json.load(file)
-            except Exception as e:
-                raise ValueError(f"Failed to load configuration file: {e}.")
-        else:
-            read_config = self.config_interface.read_config(config_name)
-
-            if(read_config is None):
-                raise ValueError(f"Failed to load config {config_name}. Ensure config profile exists.")
-
-            self.config = json.loads(read_config[0])
+    def __init__(self, config_name: str, db: DatabaseInterface):
+        config_reader = ConfigReader(config_name, db)
+        config_data = config_reader.read()
         
-        self.name = self.config.get("name", "Unnamed Configuration")
-        self.description = self.config.get("description", "")
-        self.properties = self.config.get("properties", {})
-        self.unparsed_transforms = self.config.get("transforms", [])
+        self.name = config_data.get("name", "Unnamed Configuration")
+        self.description = config_data.get("description", "")
+        self.properties = config_data.get("properties", {})
+        self.unparsed_transforms = config_data.get("transforms", [])
 
     def name(self) -> str:
         """Returns the name of the configuration"""

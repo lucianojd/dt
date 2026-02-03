@@ -8,17 +8,3 @@ class Writer:
         self.file_path = file_path
         self.verbose = verbose
         self.append = append
-    
-    def write(self, df: pd.DataFrame):
-        """Write the data frame to the output file in CSV format."""
-        if isinstance(self.file_path, str):
-            df.to_csv(
-                self.file_path, 
-                index=False, 
-                float_format="%.2f", 
-                date_format="%Y-%m-%d", 
-                header=self.append is False, 
-                mode="a" if self.append is True else "w"
-            )
-        else:
-            self.db.transactions_insert(df)

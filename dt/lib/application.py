@@ -12,6 +12,7 @@ from dt.io.writer import Writer
 from dt.lib.transform import Transformer
 from dt.io.argument_parser import ArgumentReader
 from argparse import ArgumentParser, _SubParsersAction
+from dt.lib.transaction import TransactionList
 
 class Application(ABC):
     def __init__(self, application: str):
@@ -105,11 +106,6 @@ class TransformApplication(Application):
     def run(self) -> None:
         # Need to handle the list that is currently coming in.
         reader = DataReader(self.paths[0], headers=self.config.headers(), verbose=self.verbose)
-        writer = Writer(self.db, self.output, self.verbose, self.append)
-
-        transformer = Transformer(self.verbose)
-        transformer.set_transforms(self.config.transforms())
-
         try:
             df = reader.read()
         except Exception as e:
@@ -117,15 +113,22 @@ class TransformApplication(Application):
             return
         
         try:
+            transformer = Transformer(self.verbose)
+            transformer.set_transforms(self.config.transforms())
             df = transformer.transform(df)
         except Exception as e:
             print(f"Error transforming data from file {reader.file_path}: {e}")
             return
         
         try:
-            writer.write(df)
+            transaction_list = TransactionList.from_dataframe(df)
+
+            if self.output is None:
+                transaction_list.write_to_db(self.db, verbose=self.verbose)
+            else:
+                transaction_list.write_to_csv(self.output, self.append, self.verbose)
         except Exception as e:
-            print(f"Error writing output file {writer.file_path}: {e}")
+            print(f"Error creating transaction list from data frame: {e}")
             return
 
     def __str__(self) -> str:

@@ -1,9 +1,6 @@
 import sqlite3
 import pathlib
 
-from pandas import DataFrame
-from hashlib import sha256
-
 class DatabaseInitializer:
     def __init__(self, executable_path: str):
         parent_folder = pathlib.Path(executable_path).parent
@@ -82,13 +79,7 @@ class DatabaseInterface:
         count = cursor.fetchone()[0]
         return count
     
-
-    def transactions_insert(self, transactions: DataFrame):
-        try:
-            transactions["id"] = transactions.apply(lambda row: sha256("".join(str(value) for value in row).encode()).hexdigest(), axis=1)
-            transactions.drop_duplicates(subset=["id"], inplace=True)
-            transactions.to_sql("transactions", self.connection, if_exists="append", index=False)
-        except Exception as e:
-            print(type(e).__name__)
-
-            raise Exception(f"Error inserting transactions into database: {e}")
+    def transactions_search(self, id: str):
+        cursor = self.connection.execute("SELECT * FROM transactions WHERE id = ?", (id,))
+        row = cursor.fetchone()
+        return row

@@ -3,7 +3,6 @@ from enum import Enum
 
 class Assignment:
     def __init__(self, column: str | int, value: str | int | float):
-        self.name = ""
         self.column = column
         self.value = value
 
@@ -15,7 +14,7 @@ class Assignment:
             df.loc[filter, self.column] = self.value
 
     def __str__(self) -> str:
-        return f"{self.name}(column={self.column}, value={self.value})"
+        return f"{self.__class__.__name__}(column={self.column}, value={self.value})"
     
     def __repr__(self) -> str:
         return self.__str__()
@@ -23,7 +22,6 @@ class Assignment:
 class ColumnAssignment(Assignment):
     """Assign the value of one column to another column."""
     def __init__(self, column, value):
-        self.name = "ColumnAssignment"
         super().__init__(column, value)
 
     def assign(self, df: pd.DataFrame, filter: pd.Series | None = None) -> None:
@@ -35,19 +33,16 @@ class ColumnAssignment(Assignment):
 class IntAssignment(Assignment):
     """Assign an integer value to a column."""
     def __init__(self, column, value):
-        self.name = "IntAssignment"
         super().__init__(column, int(value))
     
 class StringAssignment(Assignment):
     """Assign a string value to a column."""
     def __init__(self, column, value):
-        self.name = "StringAssignment"
         super().__init__(column, str(value))
 
 class FloatAssignment(Assignment):
     """Assign a float value to a column."""
     def __init__(self, column, value):
-        self.name = "FloatAssignment"
         super().__init__(column, float(value))
 
 class AssignmentType(Enum):

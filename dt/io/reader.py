@@ -8,10 +8,6 @@ from abc import abstractmethod, ABC
 
 # Make a CSV and config specific reader.
 class Reader(ABC):
-    def __init__(self, file_path: str):
-        self.file_path = file_path
-        # self.df = pd.read_csv(self.file_path, header=0 if self.headers else None)
-
     @abstractmethod
     def read(self) -> Any:
         pass
@@ -20,17 +16,20 @@ class Reader(ABC):
     def __str__(self) -> str:
         pass
 
-def isFile(file_path: str, pattern: str | None = None) -> bool:
+def isDir(path: str) -> bool:
+    return os.path.exists(path) and os.path.isdir(path)
+
+def isFile(file: str, pattern: str | None = None) -> bool:
     if pattern is None:
-        return os.path.isfile(file_path)
+        return os.path.exists(file) and os.path.isfile(file)
     else:
-        return os.path.isfile(file_path) and (re.match(pattern, file_path) is not None)
+        return os.path.exists(file) and os.path.isfile(file) and (re.match(pattern, file) is not None)
 
-def isCSV(file_path: str):
-    return isFile(file_path, r".*\.(csv|CSV)$")
+def isCSV(file: str):
+    return isFile(file, r".*\.(csv|CSV)$")
 
-def isJSON(file_path: str):
-    return isFile(file_path, r".*\.(json|JSON)$")
+def isJSON(file: str):
+    return isFile(file, r".*\.(json|JSON)$")
 
 class ConfigReader(Reader):
     def __init__(self, config_name: str, db: DatabaseInterface):
@@ -57,38 +56,42 @@ class ConfigReader(Reader):
             
 
 class DataReader(Reader):
-    def __init__(self, file_path: str, headers = True, verbose = False):
+    def __init__(self, file_paths: list[str], headers = True, verbose = False):
         self.headers = headers
         self.verbose = verbose
-        self.file_path = file_path
+        self.file_paths = file_paths
 
     def read(self) -> pd.DataFrame:
-
         file_paths = []
-        if not os.path.exists(self.file_path):
-            raise FileNotFoundError(f"File not found: {self.file_path}")
-        elif os.path.isdir(self.file_path):
-            full_paths = [os.path.join(self.file_path, file) for file in os.listdir(self.file_path)]
-            file_paths = [file_path for file_path in full_paths if isCSV(file_path)]
-        elif isFile(self.file_path):
-            file_paths = [self.file_path]
-        else:
-            raise ValueError(f"Path is not a file or directory: {self.file_path}")
+        for file_path in self.file_paths:
+            if isDir(file_path):
+                files = [os.path.join(file_path, file) for file in os.listdir(file_path)]
+                file_paths += ([file for file in files if isCSV(file)])
+            elif isFile(file_path):
+                file_paths.append(file_path)
+            else:
+                raise ValueError(f"Path is not a file or directory: {file_path}")
         
         dfs = [pd.read_csv(file_path, header = 0 if self.headers else None) for file_path in file_paths]
+        dfs = [df for df in dfs if not df.empty]
         df = pd.concat(dfs, ignore_index=True)
 
         return df
 
 
     def __str__(self) -> str:
-        if os.path.isdir(self.file_path):
-            dir_name = os.path.basename(self.file_path)
-            dir_path = self.file_path
-            return f"CSVReader(dir_name={dir_name}, dir_path={dir_path})"
-        elif os.path.isfile(self.file_path):
-            file_name = os.path.basename(self.file_path)
-            file_path = self.file_path
-            return f"CSVReader(file_name={file_name}, file_path={file_path})"
-        else:
-            raise ValueError(f"CSVReader file_path {self.file_path} is invalid.")
+        output = ""
+        for index, path in enumerate(self.file_paths):
+            if os.path.isdir(path):
+                dir_name = os.path.basename(path)
+                output += f"CSVReader(dir_name={dir_name}, dir_path={path})"
+            elif os.path.isfile(path):
+                file_name = os.path.basename(path)
+                output += f"CSVReader(file_name={file_name}, file_path={path})"
+            else:
+                raise ValueError(f"CSVReader file_path {path} is invalid.")
+
+            if index < len(self.file_paths) - 1:
+                output += "\n"
+
+        return output

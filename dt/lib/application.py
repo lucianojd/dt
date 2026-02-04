@@ -8,7 +8,6 @@ from abc import abstractmethod, ABC
 from dt.io.db.interface import DatabaseInterface
 from dt.lib.config import Config
 from dt.io.reader import DataReader
-from dt.io.writer import Writer
 from dt.lib.transform import Transformer
 from dt.io.argument_parser import ArgumentReader
 from argparse import ArgumentParser, _SubParsersAction
@@ -105,11 +104,11 @@ class TransformApplication(Application):
 
     def run(self) -> None:
         # Need to handle the list that is currently coming in.
-        reader = DataReader(self.paths[0], headers=self.config.headers(), verbose=self.verbose)
+        reader = DataReader(self.paths, headers=self.config.headers(), verbose=self.verbose)
         try:
             df = reader.read()
         except Exception as e:
-            print(f"Error reading file {reader.file_path}: {e}")
+            print(f"Error reading files:\n {reader}: {e}")
             return
         
         try:
@@ -117,7 +116,7 @@ class TransformApplication(Application):
             transformer.set_transforms(self.config.transforms())
             df = transformer.transform(df)
         except Exception as e:
-            print(f"Error transforming data from file {reader.file_path}: {e}")
+            print(f"Error transforming data from file {reader}: {e}")
             return
         
         try:

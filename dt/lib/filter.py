@@ -12,9 +12,11 @@ class Filter(ABC):
     def apply(self, df: pd.DataFrame) -> pd.Series:
         pass
     
-    @abstractmethod
     def __str__(self) -> str:
-        pass
+        return f"{self.__class__.__name__}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
 class FilterError(ValueError):
     def __init__(self, filter: str, message: str):
@@ -38,7 +40,7 @@ class NotNull(Filter):
         return df[self.column].notnull()
     
     def __str__(self) -> str:
-        return f"{self.__class__.__name__}(column={self.column})"
+        return f"{super().__str__()}(column={self.column})"
     
 
 class Regex(Filter):
@@ -61,7 +63,7 @@ class Regex(Filter):
         return df[self.column].astype(str).str.match(self.pattern)
     
     def __str__(self) -> str:
-        return f"{self.__class__.__name__}(column={self.column}, pattern={self.pattern})"
+        return f"{super().__str__()}(column={self.column}, pattern={self.pattern})"
 
 
 class ComparisonFilter(Filter):
@@ -84,7 +86,7 @@ class ComparisonFilter(Filter):
         pass
 
     def __str__(self) -> str:
-        return f"{self.__class__.__name__}(column={self.column}, threshold={self.threshold})"
+        return f"{super().__str__()}(column={self.column}, threshold={self.threshold})"
 
 class GreaterThan(ComparisonFilter):
     def apply(self, df: pd.DataFrame) -> pd.Series:

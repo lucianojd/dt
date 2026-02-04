@@ -180,7 +180,7 @@ class TestFilters(unittest.TestCase):
 
 class TestCSVReader(unittest.TestCase):
     def test_ReadSingleCSV(self):
-        df = r.DataReader("tests/data/test.csv", True, False).read()
+        df = r.DataReader(["tests/data/test.csv"], True, False).read()
         expected_df = pd.DataFrame({
             "name": ["transaction1", "transaction2", "transaction3"],
             "date": ["2025-01-01", "2025-02-02", "2025-03-03"],
@@ -190,7 +190,7 @@ class TestCSVReader(unittest.TestCase):
         self.assertTrue(df.equals(expected_df))
 
     def test_ReadMultipleCSV(self):
-        df = r.DataReader("tests/data/multiple_csvs", True, False).read()
+        df = r.DataReader(["tests/data/multiple_csvs"], True, False).read()
         expected_df = pd.DataFrame({
             "name": ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"],
             "date": ["2025-01-01", "2025-01-02", "2025-01-03", "2025-02-01", "2025-02-02", "2025-02-03", "2025-03-01", "2025-03-02", "2025-03-03"],

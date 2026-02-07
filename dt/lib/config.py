@@ -46,7 +46,7 @@ class Config:
             raise ValueError("Invalid 'transforms' property in configuration; must be a list.")
     
     def __str__(self):
-        return f"Config(name={self.name}, description={self.description})"
+        return f"Config(\nname={self.name}\ndescription={self.description}\nheaders={self.headers()}\ntransforms=(\n{"\n".join([str(transform) for transform in self.transforms()])}\n))"
     
     def __repr__(self):
         return self.__str__()

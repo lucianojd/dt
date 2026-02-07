@@ -62,16 +62,7 @@ class ConfigApplication(Application):
                 self.database_inteface.config_delete(self.args.name)
             case "info":
                 config = Config(self.args.name, self.db)
-
-                print(f"Name:\n\t{config.name}")
-                print(f"Description:\n\t{config.description}")
-                print(f"Headers:\n\t{config.headers()}")
-
-                print("Transforms:")
-                transforms = config.transforms()
-                for transform in transforms:
-                    print(f"\t{transform}")
-
+                print(config)
             case _:
                 raise Exception(f"Unknown config application mode: \"{self.args.mode}\"")
 

@@ -2,6 +2,7 @@ from datetime import datetime
 from hashlib import sha256
 from dt.io.db.interface import DatabaseInterface
 from pandas import DataFrame
+import bisect
 
 class TransactionList:
     def __init__(self):
@@ -25,19 +26,21 @@ class TransactionList:
         self.transactions.append(transaction)
 
     def remove_transaction(self, id: str):
-        self.transactions = [t for t in self.transactions if t.id != id]
+        self.transactions = [t for t in self.transactions if t.hash != id]
 
     def write_to_db(self, db: DatabaseInterface, verbose: bool = False):
         transactions_added = 0
         transactions_skipped = 0
+
+        hashes_in_db = set(db.transactions_get_hashes())
         for transaction in self.transactions:
-            if  db.transactions_search(transaction.id) is None:
+            if transaction.hash not in hashes_in_db:
                 db.connection.execute(
                     """
-                    INSERT INTO transactions (id, date, description, institution, type, amount)
+                    INSERT INTO transactions (hash, date, description, institution, type, amount)
                     VALUES (?, ?, ?, ?, ?, ?)
                     """,
-                    (transaction.id, transaction.date.isoformat(), transaction.description, transaction.institution, transaction.type, transaction.amount)
+                    (transaction.hash, transaction.date.isoformat(), transaction.description, transaction.institution, transaction.type, transaction.amount)
                 )
                 db.connection.commit()
                 transactions_added += 1
@@ -50,7 +53,7 @@ class TransactionList:
 
     def write_to_csv(self, file_path: str, append: bool = False, verbose: bool = False):
         df = DataFrame([{
-            'id': t.id,
+            'id': t.hash,
             'date': t.date,
             'description': t.description,
             'institution': t.institution,
@@ -75,7 +78,7 @@ class TransactionList:
 
 class Transaction:
     def __init__(self, date: datetime, description: str, institution: str, type: str, amount: float):
-        self.id = sha256(f"{date}{description}{institution}{type}{amount}".encode('utf-8')).hexdigest()
+        self.hash = sha256(f"{date}{description}{institution}{type}{amount}".encode('utf-8')).hexdigest()
         self.date = date
         self.description = description
         self.institution = institution
@@ -83,4 +86,4 @@ class Transaction:
         self.amount = amount
     
     def __str__(self) -> str:
-        return f"Transaction(id={self.id}, date={self.date}, description={self.description}, institution={self.institution}, type={self.type}, amount={self.amount})"
+        return f"Transaction(id={self.hash}, date={self.date}, description={self.description}, institution={self.institution}, type={self.type}, amount={self.amount})"

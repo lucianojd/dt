@@ -19,7 +19,8 @@ class DatabaseInitializer:
         self.connection.execute(
             """
             CREATE TABLE IF NOT EXISTS transactions (
-            id TEXT PRIMARY KEY,
+            id INTEGER PRIMARY KEY,
+            hash TEXT,
             date TEXT,
             description TEXT,
             institution TEXT,
@@ -79,7 +80,12 @@ class DatabaseInterface:
         count = cursor.fetchone()[0]
         return count
     
-    def transactions_search(self, id: str):
-        cursor = self.connection.execute("SELECT * FROM transactions WHERE id = ?", (id,))
+    def transactions_get_hashes(self):
+        cursor = self.connection.execute("SELECT hash FROM transactions")
+        hashes = [row[0] for row in cursor.fetchall()]
+        return hashes
+    
+    def transactions_search(self, hash: str):
+        cursor = self.connection.execute("SELECT * FROM transactions WHERE hash = ?", (hash,))
         row = cursor.fetchone()
         return row

@@ -1,5 +1,6 @@
 #!.dt-venv/bin/python3
-import sys
+import sys, time
+from tracemalloc import start
 from dt.io.argument_parser import ArgumentReader
 from dt.lib.application import ApplicationFactory
 from dt.io.db.interface import DatabaseInterface
@@ -18,7 +19,20 @@ def main():
 
         # Determine application to run.
         application = ApplicationFactory.create_application(arg_reader, database_interface)
-        application.run()
+
+       
+        if arg_reader.get_verbose():
+            print(f"Running dt application: {application.__class__.__name__}")
+            start = time.perf_counter()
+
+            application.run()
+
+            print(f"Application {application.__class__.__name__} completed.")
+            end = time.perf_counter()
+            print(f"Application {application.__class__.__name__} completed in {end - start:.2f} seconds.")
+
+        else:
+            application.run()
 
     except Exception as e:
         print(f"Error running dt: {e}")

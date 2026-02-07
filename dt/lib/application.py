@@ -14,9 +14,6 @@ from argparse import ArgumentParser, _SubParsersAction
 from dt.lib.transaction import TransactionList
 
 class Application(ABC):
-    def __init__(self, application: str):
-        self.application = application
-
     @staticmethod
     @abstractmethod
     def attach(subparser: _SubParsersAction[ArgumentParser]):
@@ -24,14 +21,12 @@ class Application(ABC):
 
     @abstractmethod
     def run(self) -> None:
-        raise RuntimeError(f"run method was not implemanted for \"{self.application}\" application")
+        raise RuntimeError(f"run method was not implemanted for \"{self.__class__.__name__}\" application")
 
 class ConfigApplication(Application):
     def __init__(self, args: Namespace, db: DatabaseInterface):
-        super().__init__("config")
         self.db = db
         self.database_inteface = db
-        self.mode = args.mode
         self.args = args
 
     @staticmethod
@@ -51,7 +46,7 @@ class ConfigApplication(Application):
         config_modes_info.add_argument('name', type=str, help="Print details about the configuration")
     
     def run(self) -> None:
-        match(self.mode):
+        match(self.args.mode):
             case "add":
                 name = path.basename(Path(self.args.file).stem)
                 
@@ -77,10 +72,12 @@ class ConfigApplication(Application):
                 for transform in transforms:
                     print(f"\t{transform}")
 
+            case _:
+                raise Exception(f"Unknown config application mode: \"{self.args.mode}\"")
+
 
 class TransformApplication(Application):
     def __init__(self, args: Namespace, db: DatabaseInterface):
-        super().__init__("transform")
         self.db = db
 
         try:
@@ -91,7 +88,7 @@ class TransformApplication(Application):
             self.output = args.output
             self.append = args.append
         except Exception as e:
-            print(f"Error creating \"{self.application}\": {e}")
+            print(f"Error creating \"{self.__class__.__name__}\": {e}")
 
     @staticmethod
     def attach(subparser: _SubParsersAction[ArgumentParser]):
@@ -99,7 +96,6 @@ class TransformApplication(Application):
         transform_parser.add_argument("-c", "--config", required=True, type=str, help="path to the configuration file")
         transform_parser.add_argument("paths", nargs="+", type=str, help="the path to the bank statement file")
         transform_parser.add_argument("-a", "--append", action="store_true", help="append to the output file instead of overwriting")
-        transform_parser.add_argument("-v", "--verbose", action="store_true", help="enable verbose output")
         transform_parser.add_argument("-o", "--output", type=str, help="the path to the output file (default: output.csv)")
 
     def run(self) -> None:
